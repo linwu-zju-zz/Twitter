@@ -10,6 +10,7 @@ import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.codepath.apps.Twitter.models.Tweet;
 import com.codepath.apps.Twitter.models.User;
 import com.loopj.android.http.JsonHttpResponseHandler;
 import com.squareup.picasso.Picasso;
@@ -24,6 +25,8 @@ public class ComposeActivity extends AppCompatActivity {
     ImageView ivProfilePicture;
     TextView tvUserName;
     TextView tvUserId;
+    Tweet tweet;
+    User user;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -37,9 +40,6 @@ public class ComposeActivity extends AppCompatActivity {
 
         client = TwitterApplication.getRestClient();// singleton client
         getLoginUser();
-
-
-
     }
 
     private void setCustomActionBar() {
@@ -61,13 +61,12 @@ public class ComposeActivity extends AppCompatActivity {
             @Override
             public void onFailure(int statusCode, Header[] headers, String responseString, Throwable throwable) {
                 super.onFailure(statusCode, headers, responseString, throwable);
-                Toast.makeText(ComposeActivity.this, "Failure", Toast.LENGTH_LONG).show();
             }
         });
     }
 
     private void setupView(JSONObject response) {
-        User user = User.fromJSON(response);
+        user = User.fromJSON(response);
         Picasso.with(ComposeActivity.this).load(user.getProfileImageUrl()).into(ivProfilePicture);
         tvUserName.setText(user.getName());
         tvUserId.setText(user.getUid()+"");
@@ -82,8 +81,9 @@ public class ComposeActivity extends AppCompatActivity {
 
     public void onClickTweet(MenuItem item) {
         data = edBody.getText().toString();
+        tweet = new Tweet(user, data);
         Intent returnIntent = new Intent();
-        returnIntent.putExtra("MyTweetBody", data);
+        returnIntent.putExtra("MyTweet", tweet);
         setResult(RESULT_OK, returnIntent);
         finish();
     }

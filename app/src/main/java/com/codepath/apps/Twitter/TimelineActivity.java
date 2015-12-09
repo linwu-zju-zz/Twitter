@@ -83,8 +83,9 @@ public class TimelineActivity extends AppCompatActivity {
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
         if(resultCode == RESULT_OK && requestCode == 0) {
-            String myTweetBody = data.getStringExtra("MyTweetBody");
-            Toast.makeText(this, myTweetBody, Toast.LENGTH_LONG).show();
+            Tweet composedTweet = (Tweet) data.getSerializableExtra("MyTweet");
+            aTweets.add(composedTweet);
+
         }
     }
 }

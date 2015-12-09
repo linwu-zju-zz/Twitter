@@ -1,9 +1,13 @@
 package com.codepath.apps.Twitter.models;
 
+import android.os.Parcel;
+import android.os.Parcelable;
+
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Collection;
 
@@ -12,7 +16,7 @@ import java.util.Collection;
  */
 
 // parse the json + store the data
-public class Tweet {
+public class Tweet implements Parcelable {
     private String body;
     private long uid;
     private User user;
@@ -32,6 +36,13 @@ public class Tweet {
         }
 
         return tweet;
+    }
+
+    public Tweet() {}
+
+    public Tweet(User user, String body) {
+        this.user = user;
+        this.body = body;
     }
 
     public String getBody() {
@@ -69,5 +80,15 @@ public class Tweet {
 
         }
         return tweets;
+    }
+
+    @Override
+    public int describeContents() {
+        return 0;
+    }
+
+    @Override
+    public void writeToParcel(Parcel dest, int flags) {
+        //dest.writeString();
     }
 }

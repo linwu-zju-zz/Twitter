@@ -1,5 +1,9 @@
 # RestClientTemplate
 
+## Assignment - 1
+  ![imgur](http://i.imgur.com/rzaz71Q.gif)
+
+
 ## Overview
 
 RestClientTemplate is a skeleton Android project that makes writing Android apps sourced from OAuth JSON REST APIs as easy as possible. This skeleton project
