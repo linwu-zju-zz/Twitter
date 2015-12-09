@@ -1,8 +1,8 @@
 package com.codepath.apps.Twitter;
 
 import android.content.Intent;
-import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
+import android.support.v7.app.AppCompatActivity;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.widget.ListView;
@@ -10,7 +10,6 @@ import android.widget.Toast;
 
 import com.codepath.apps.Twitter.models.Tweet;
 import com.codepath.apps.Twitter.models.User;
-import com.loopj.android.http.AsyncHttpResponseHandler;
 import com.loopj.android.http.JsonHttpResponseHandler;
 
 import org.apache.http.Header;
@@ -24,9 +23,10 @@ public class TimelineActivity extends AppCompatActivity {
     private TwitterClient client;
     private ArrayList<Tweet> tweets;
     private TweetsArrayAdapter aTweets;
-    private Tweet loginUserTweet;
     private ListView lvTweets;
-    private JSONObject mResponse;
+    public String url;
+    public String userName;
+    public String userId;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -51,8 +51,11 @@ public class TimelineActivity extends AppCompatActivity {
             @Override
             public void onSuccess(int statusCode, Header[] headers, JSONObject response) {
                 super.onSuccess(statusCode, headers, response);
-                String url = User.fromJSON(response).getProfileImageUrl();
-                Toast.makeText(TimelineActivity.this, User.fromJSON(response).getScreenName(), Toast.LENGTH_LONG).show();
+                User user = User.fromJSON(response);
+                url = user.getProfileImageUrl();
+                userName = user.getName();
+                userId = user.getUid()+"";
+                //Toast.makeText(TimelineActivity.this, User.fromJSON(response).getScreenName(), Toast.LENGTH_LONG).show();
             }
 
             @Override
@@ -98,8 +101,11 @@ public class TimelineActivity extends AppCompatActivity {
     }
 
     public void onClickCompose(MenuItem item) {
-        Intent i = new Intent(this, ComposeActivity.class);
-        startActivityForResult(i, 0);
+        Intent intent = new Intent(this, ComposeActivity.class);
+        intent.putExtra("picture_url", url);
+        intent.putExtra("user_name", userName);
+        intent.putExtra("user_id", userId);
+        startActivityForResult(intent, 0);
     }
 
     @Override
