@@ -8,10 +8,17 @@ import android.view.MenuItem;
 import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.TextView;
+import android.widget.Toast;
 
+import com.codepath.apps.Twitter.models.User;
+import com.loopj.android.http.JsonHttpResponseHandler;
 import com.squareup.picasso.Picasso;
 
+import org.apache.http.Header;
+import org.json.JSONObject;
+
 public class ComposeActivity extends AppCompatActivity {
+    private TwitterClient client;
     EditText edBody;
     String data;
     ImageView ivProfilePicture;
@@ -22,18 +29,16 @@ public class ComposeActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_compose);
-        Intent intent = getIntent();
-        String url = intent.getStringExtra("picture_url");
-        String userName = intent.getStringExtra("user_name");
-        String userId = intent.getStringExtra("user_id");
         setCustomActionBar();
         edBody = (EditText) findViewById(R.id.etBody);
         tvUserName = (TextView) findViewById(R.id.myUserName);
         tvUserId = (TextView) findViewById(R.id.myId);
         ivProfilePicture = (ImageView) findViewById(R.id.myProfileImage);
-        Picasso.with(ComposeActivity.this).load(url).into(ivProfilePicture);
-        tvUserName.setText(userName);
-        tvUserId.setText(userId);
+
+        client = TwitterApplication.getRestClient();// singleton client
+        getLoginUser();
+
+
 
     }
 
@@ -42,6 +47,31 @@ public class ComposeActivity extends AppCompatActivity {
         getSupportActionBar().setTitle("Compose new Tweet");
         getSupportActionBar().setLogo(R.drawable.twitter_icon);
         getSupportActionBar().setDisplayUseLogoEnabled(true);
+    }
+
+    private void getLoginUser() {
+        client.getLoginJson(new JsonHttpResponseHandler() {
+            @Override
+            public void onSuccess(int statusCode, Header[] headers, JSONObject response) {
+                super.onSuccess(statusCode, headers, response);
+                setupView(response);
+                //Toast.makeText(TimelineActivity.this, User.fromJSON(response).getScreenName(), Toast.LENGTH_LONG).show();
+            }
+
+            @Override
+            public void onFailure(int statusCode, Header[] headers, String responseString, Throwable throwable) {
+                super.onFailure(statusCode, headers, responseString, throwable);
+                Toast.makeText(ComposeActivity.this, "Failure", Toast.LENGTH_LONG).show();
+            }
+        });
+    }
+
+    private void setupView(JSONObject response) {
+        User user = User.fromJSON(response);
+        Picasso.with(ComposeActivity.this).load(user.getProfileImageUrl()).into(ivProfilePicture);
+        tvUserName.setText(user.getName());
+        tvUserId.setText(user.getUid()+"");
+
     }
 
     @Override

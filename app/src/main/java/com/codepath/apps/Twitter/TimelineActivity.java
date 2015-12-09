@@ -19,14 +19,10 @@ import org.json.JSONObject;
 import java.util.ArrayList;
 
 public class TimelineActivity extends AppCompatActivity {
-
     private TwitterClient client;
     private ArrayList<Tweet> tweets;
     private TweetsArrayAdapter aTweets;
     private ListView lvTweets;
-    public String url;
-    public String userName;
-    public String userId;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -42,28 +38,7 @@ public class TimelineActivity extends AppCompatActivity {
         // Connect adapter to list view
         lvTweets.setAdapter(aTweets);
         client = TwitterApplication.getRestClient();// singleton client
-        getLoginUser();
         populateTimeline();
-    }
-
-    private void getLoginUser() {
-        client.getLoginJson(new JsonHttpResponseHandler() {
-            @Override
-            public void onSuccess(int statusCode, Header[] headers, JSONObject response) {
-                super.onSuccess(statusCode, headers, response);
-                User user = User.fromJSON(response);
-                url = user.getProfileImageUrl();
-                userName = user.getName();
-                userId = user.getUid()+"";
-                //Toast.makeText(TimelineActivity.this, User.fromJSON(response).getScreenName(), Toast.LENGTH_LONG).show();
-            }
-
-            @Override
-            public void onFailure(int statusCode, Header[] headers, String responseString, Throwable throwable) {
-                super.onFailure(statusCode, headers, responseString, throwable);
-                Toast.makeText(TimelineActivity.this, "Failure", Toast.LENGTH_LONG).show();
-            }
-        });
     }
 
     private void setCustomActionBar() {
@@ -102,9 +77,6 @@ public class TimelineActivity extends AppCompatActivity {
 
     public void onClickCompose(MenuItem item) {
         Intent intent = new Intent(this, ComposeActivity.class);
-        intent.putExtra("picture_url", url);
-        intent.putExtra("user_name", userName);
-        intent.putExtra("user_id", userId);
         startActivityForResult(intent, 0);
     }
 
