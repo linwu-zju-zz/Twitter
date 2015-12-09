@@ -1,7 +1,10 @@
 package com.codepath.apps.Twitter;
 
+import android.content.Intent;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
+import android.view.Menu;
+import android.view.MenuItem;
 import android.widget.ListView;
 
 import com.codepath.apps.Twitter.models.Tweet;
@@ -24,6 +27,8 @@ public class TimelineActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_timeline);
+        setCustomActionBar();
+
         lvTweets = (ListView) findViewById(R.id.lvTweets);
         // Create the arraylist (data source)
         tweets = new ArrayList<>();
@@ -33,6 +38,19 @@ public class TimelineActivity extends AppCompatActivity {
         lvTweets.setAdapter(aTweets);
         client = TwitterApplication.getRestClient();    // singleton client
         populateTimeline();
+    }
+
+    private void setCustomActionBar() {
+        getSupportActionBar().setDisplayShowHomeEnabled(true);
+        getSupportActionBar().setTitle("");
+        getSupportActionBar().setLogo(R.drawable.twitter_icon);
+        getSupportActionBar().setDisplayUseLogoEnabled(true);
+    }
+
+    @Override
+    public boolean onCreateOptionsMenu(Menu menu) {
+        getMenuInflater().inflate(R.menu.menu_timeline, menu);
+        return true;
     }
 
     // send an API
@@ -54,5 +72,10 @@ public class TimelineActivity extends AppCompatActivity {
             }
         });
 
+    }
+
+    public void onClickCompose(MenuItem item) {
+        Intent i = new Intent(this, ComposeActivity.class);
+        startActivity(i);
     }
 }
